@@ -25,7 +25,7 @@ def zakaz_yes_4():
 
 
 def zakaz_get_type_5():
-	message_sender(id, "Напиши пожалуйста тип заказа(1,2,3,):\n1.Печать 2.Сканирование 3. Ксерокопия\nПросто напиши цифру")
+	message_sender(id, "Напиши пожалуйста тип заказа(1,2,3,):\n1.Печать 2.Сканирование 3.Ксерокопия\nПросто напиши цифру")
 	i = 0
 	for event in longpoll.listen():
 		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
