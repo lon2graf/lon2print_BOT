@@ -83,6 +83,6 @@ cover/
 # PEP 582; used by e.g. github.com/David-OConnor/pyflow
 __pypackages__/
 
-config.py
+*.py
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,pythonvanilla
