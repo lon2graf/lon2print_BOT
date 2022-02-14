@@ -84,5 +84,6 @@ cover/
 __pypackages__/
 
 *.py
+!bot.py
 
 # End of https://www.toptal.com/developers/gitignore/api/linux,pythonvanilla
