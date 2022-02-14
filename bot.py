@@ -101,7 +101,6 @@ def get_k_str():
 	except:
 		message_sender(id,"Напиши так, как я сказал, пожалуйста")
 		get_k_str()
-	print (zakaz + type_zk + type_pr + str(k_str))
 	get_price_print()
 	return k_str
 
