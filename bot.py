@@ -6,213 +6,177 @@ import config
 def message_sender(id, text):
 	vk.messages.send(user_id = id, message = text, random_id = 0)
 
-def start_send_1():
-	message_sender(id, "Привет, я бот - твой персональный помощник. Я бот, который создан специально для того, чтобы помогать администратору группы vk.com/lon2print . Моя функциональность заключается в том, что быстро проконсультировать пользователей и получившийся заказ немедленно отправить администаратору, который ознакомится с вашим заказом и обслужит вас(по красоте конечно). Для большей информации пиши !помоги")
-
-def send_help_2():
-	message_sender(id, "Команды, которые поддерживает бот :")
-	message_sender(id, "!помоги - получение некоторой помощи по боту.")
-	message_sender(id, "!гарантия_безопасности - бот доказывает, что в нем нет ничего опасного.")
-	message_sender(id, "!заказ - начать оформлять заказ")
-
-def send_safety_3():
-	message_sender(id, "Чтобы убедиться в том, что бот безопасен и безобиден, и в действительности выполняет то, что написано в описании, достаточно посмотреть исходный код бота по ссылке - https://github.com/lon2graf/lon2print_BOT")
-
-def zakaz_yes_4():
-	zakaz_get_type_5()
-
-
-
-
-def zakaz_get_type_5():
-	message_sender(id, "Напиши пожалуйста тип заказа(1,2,3,):\n1.Печать 2.Сканирование 3.Ксерокопия\nПросто напиши цифру")
+def get_wantenter(): # функция, которая проверяет готовность заказчика идти дальше по плану
 	i = 0
 	for event in longpoll.listen():
 		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
 			msg = event.text
 			i += 1
 			if (i == 1):
-				break
-	try:
-		if (int(msg) <= 0) or (int(msg) > 3):
-			message_sender(id,"Напиши пожалуйста цифру от 1 до 3")
-			zakaz_get_type_5()
-	except:
-		message_sender(id,"Напиши так, как я сказал, пожалуйста")
-		zakaz_get_type_5()
+				if (msg == "Да"):
+					want = 1
+					return want 	# означает, что пользователь хочет идти дальше
+				elif (msg == "Нет"):
+					want = 0
+					return want # означает, что пользователь не готов идти дальше
+				else:
+					want = "non"
+					return want
 
-	global type_zk
-	if (int(msg) == 1):
-		type_zk = "\nТип заказа 1.Печать"
-		zakaz_gettype_print()
-
-	if (int(msg) == 2):
-		type_zk = "\nТип заказа 2.Сканирование"
-		get_somethingelse()
-
-	if (int(msg) == 3):
-		type_zk = "\nТип заказа 3.Ксерокопия"
-		get_somethingelse()
-
-	return type_zk
-
-
-def zakaz_gettype_print():
-	message_sender(id, "Напиши пожалуйста тип печати(1,2,):\n1.Односторонняя 2.Двухстороняя\nПросто напиши цифру")
+def order_gettype(): # фунция составная часть от get_order() используется для получения типа заказа от заказчика
+	message_sender(id, "Напишитие пожалуйста тип услуги : \n1.Печать 2.Сканирование 3.Ксерокопия\nПросто напиши цифру")
 	i = 0
 	for event in longpoll.listen():
 		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
 			msg = event.text
 			i += 1
 			if (i == 1):
-				break
-	try:
-		if (int(msg) <= 0) or (int(msg) > 2):
-			message_sender(id,"Напиши пожалуйста цифру либо 1 либо 2")
-			zakaz_gettype_print()
-	except:
-		message_sender(id,"Напиши так, как я сказал, пожалуйста")
-		zakaz_gettype_print()
+				if (msg == "1"):
+					order_type = 1
+					return order_type
+				elif (msg == "2"):
+					order_type = 2
+					return order_type
+				elif (msg == "3"):
+					order_type = 3
+					return order_type
+				else:
+					message_sender(id, "сори я тебя не понял, пиши пожалуйста так, как я сказал")
+					return "non"
 
-	global type_pr
-	if(int(msg) == 1):
-		type_pr =  "\nПечать Односторонняя\nКол-во страниц "
-		get_k_str()
-		return type_pr
-	if(int(msg) == 2):
-		type_pr =  "\nПечать Двухстороняя\nКол-во страниц "
-		get_k_str()
-		return type_pr
-
-
-
-
-def get_k_str():
-	message_sender(id, "Напиши пожалуйста количество страниц необходимых для печати(Просто введи целое число)")
+#вызывается если услуга связана с печатью
+def gettype_print(): # функция для получения типа печати
+	message_sender(id, "Напишитие пожалуйста тип печати : \n1.Одностороняя 2.Двухсторонняя\nПросто напиши цифру")
 	i = 0
 	for event in longpoll.listen():
 		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
 			msg = event.text
 			i += 1
 			if (i == 1):
-				break
-	try:
-		global k_str
-		k_str = int(msg)
-	except:
-		message_sender(id,"Напиши так, как я сказал, пожалуйста")
-		get_k_str()
-	get_price_print()
-	return k_str
+				if (msg == "1"):
+					type_print = 1
+					return type_print
+				elif (msg == "2"):
+					type_print = 2
+					return type_print
+				else:
+					type_print = "non"
+					return type_print
 
-def get_price_print():
-	global price
-	if ((type_zk == "\nТип заказа 1.Печать")):
-		if (type_pr == "\nПечать Односторонняя\nКол-во страниц "):
-			price = k_str * 6
-		if (type_pr == "\nПечать Двухстороняя\nКол-во страниц "):
-			price = (k_str // 2) * 8 + (k_str % 2) * 6
-		message_sender(id, "Заполнение заказа почти окончено")
-		message_sender(id, str(price) + "рублей - цена(примерная потому что не учитывается много факторов) ")
-		get_somethingelse()
+def get_countsheets():
+	message_sender(id, "Напиши пожалуйста количество страниц к печати(в виде числа без лишних символов)")
+	i = 0
+	for event in longpoll.listen():
+		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+			msg = event.text
+			i += 1
+			if (i == 1):
+				try:
+					count_sheets = int(msg)
+					return count_sheets
+				except:
+					count_sheets = "non"
+					return count_sheets
+
+def get_price(type_print, count_sheets):
+	if (type_print == 1):
+		price = count_sheets * 6
 		return price
 	else:
-		return 0
-def get_somethingelse():
-	message_sender(id, "Напишите пожалуйста еще немного информации про заказ(про необходимость доставки, сроков печати и тд то что придет в голову)")
-	i = 0
-	for event in longpoll.listen():
-		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-			msg = event.text
-			i += 1
-			global get_somethingelse
-			get_somethingelse = msg
-			if (i == 1):
-				break
-	end_zakaz()
-	return get_somethingelse
+		price = (count_sheets // 2) * 8 + (count_sheets % 2) * 6
+		return price
 
-def end_zakaz():
-	message_sender(id, "Заполнение заказа готово. Документ для заказа скидывать не нужно, администратор сам его у вас спросит, когда свяжется с вами. Отправить администратору ваш заказ?(пиши либо \"Да\" либо \"Нет\" без кавычек))")
+def get_difint():
+	message_sender(id,"Напишите пожалуйста еще немного дополнительной информации, которая вам придет в голову.")
 	i = 0
 	for event in longpoll.listen():
 		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
 			msg = event.text
 			i += 1
 			if (i == 1):
-				break
-	if ((type_zk == "\nТип заказа 2.Сканирование") or (type_zk == "\nТип заказа 3.Ксерокопия")):
-		if (msg == "Да"):
-			message_sender(main_id, zakaz + type_zk + "\n" + get_somethingelse)
-			message_sender(id, "Ваш заказ успешно отправлен администратору. Вскором времени он свяжется с вами(Убедитесь, что у вас открыта личка). К сожалению пока что для данного типа заказа автоматически расчитать цену нельзя, но администратор работает над этим")
-			return 1
-		elif (msg == "Нет"):
-			message_sender(id, "Ладно")
-			return 0
-		else:
-			message_sender(id,"Напиши так, как я сказал, пожалуйста")
-			end_zakaz()
+				something = msg
+				return something
+
+
+def get_order(): #функция в которой вызываются все остальные функции для заказа и обрабатываются
+	message_sender(id, "приступаем к заказу? Напиши либо \"Да\" либо \"Нет\" без кавычек.")
+	enter = get_wantenter()
+
+	if enter == 0: #пользователь не хочет приступать к оформлению заказа
+		message_sender(id,"ладно как хочешь")
+
+	elif enter == 1: # пользователь хочет приступить к выполнению заказа
+
+		# получение типа заказа
+		print("хочет заказ")
+		type_ord = order_gettype()
+		if (type_ord == "non"):
+			while type_ord == "non":
+				type_ord = order_gettype()
+		print("тип заказа - " + str(type_ord))
+
+		#получение типа печати, количества страниц, цены если услуга = 1 или 3
+		if ((type_ord == 1) or (type_ord == 3)):
+			type_print = gettype_print()
+			if (type_print == "non"):
+				while (type_print == "non"):
+					type_print = gettype_print()
+			print("тип печати - " + str(type_print))
+			count_sheets = get_countsheets()
+			if (count_sheets == "non"):
+				while (count_sheets == "non"):
+					count_sheets = get_countsheets()
+			print("колво страниц - " + str(count_sheets))
+
+			#получение приблизительной цены
+			if (type_print == 1):
+				money = get_price(1,count_sheets)
+			elif (type_print == 2):
+				money = get_price(2, count_sheets)
+
+
+			info_dop = get_difint()
+			message_sender(id, "Приблизительная цена(потому что не учитвается много факторов): " + str(money))
+			zakaz = "Ссылка : vk.com/id" + str(id) + "\n"+ "Номер заказа: " + str(type_ord) +"\n"+ "Тип печати:" + str(type_print) +"\n"+ "Доп-информация: " + info_dop +"\n" +"Примерная цена: " + str(money)
+			print(money)
+
+		elif (type_ord == 2):
+			message_sender(id, "К сожалению пока, на данное время, на данную услугу цену бот определять не умеет")
+			info_dop = get_difint()
+			zakaz = "Ссылка : vk.com/id" + str(id) + "\nНомер заказа: " + str(type_ord) + "\nДоп-информация: " + info_dop
+
+
+		message_sender(id, "Согласны вы ли отправить свой заказ администратору для дальнейшего обслуживания?(\"Да\" \"Нет\")")
+		agreement = get_wantenter()
+		if (agreement == 1):
+			message_sender(main_id, zakaz)
+		elif (agreement == 0):
+			message_sender(id, "Ладно бывает")
+		elif (agreement == "non"):
+			while (agreement == "non"):
+				agreement == get_wantenter()
+
+
 	else:
-		if (msg == "Да"):
-			message_sender(main_id, zakaz + type_zk + type_pr + str(k_str) +"\n"+ get_somethingelse + "\n" + str(price) + "рублей - цена(примерная потому что не учитывается много факторов) " )
-			message_sender(id, "Ваш заказ успешно отправлен администратору. Вскором времени он свяжется с вами(Убедитесь, что у вас открыта личка). ")
-			return 1
-		elif (msg == "Нет"):
-			message_sender(id, "Ладно")
-			return 0
-		else:
-			message_sender(id,"Напиши так, как я сказал, пожалуйста")
-			end_zakaz()
+		message_sender(id, "Прости, я не понял тебя. ")
+		get_order()
 
 
 
-def message_anchor(equal,n):
-	for event in longpoll.listen():
-		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
-			msg = event.text
-			if (msg == equal):
-				if (n == 1):
-					start_send_1()
-					return 1
-				if (n == 2):
-					send_help_2()
-					return 1
-				if (n == 3):
-					send_safety_3()
-					return 1
-				if (n == 4):
-					zakaz_yes_4()
-					return 1
-			else:
-				if (msg == "Нет"):
-					message_sender(id, "Ну ладно, бывает")
-					return 0
-				message_sender(id, "Сорри я тебя не понял")
-				return 0
 
 vk_session = vk_api.VkApi(token = config.MAIN_TOKEN)
 vk = vk_session.get_api()
 longpoll = VkLongPoll(vk_session)
 main_id = config.MAIN_ID
+print(id)
 
 for event in longpoll.listen():
-
 	if event.type == VkEventType.MESSAGE_NEW and event.to_me:
 		msg = event.text
 		id = event.user_id
-		zakaz = "Ссылка: vk.com/id" + str(id)
 
-		if (msg == "начать") or (msg == "Начать"):
-			start_send_1()
+		if (msg == "начать"):
+			message_sender(id,"дарова пиши заказ")
 
-		elif (msg == "!гарантия_безопасности"):
-			send_safety_3()
-
-		elif (msg == "!помоги"):
-			send_help_2()
-
-		elif (msg == "!заказ"):
-			message_sender(id, "Точно приступаем?(пиши либо \"Да\" либо \"Нет\" без кавычек)")
-			message_anchor("Да", 4)
-		else:
-			message_sender(id, "Сорри я тебя не понял")
+		elif (msg == "заказ"):
+			get_order()
