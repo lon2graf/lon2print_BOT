@@ -64,7 +64,7 @@ def gettype_print(): # функция для получения типа печ�
 					return type_print
 
 def get_countsheets():
-	message_sender(id, "Напиши пожалуйста количество страниц к печати(в виде числа без лишних символов)")
+	message_sender(id, "Напиши пожалуйста количество листов, которое нужно будет потратить для печати(в виде числа без лишних символов)")
 	i = 0
 	for event in longpoll.listen():
 		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
@@ -83,7 +83,7 @@ def get_price(type_print, count_sheets):
 		price = count_sheets * 6
 		return price
 	else:
-		price = (count_sheets // 2) * 8 + (count_sheets % 2) * 6
+		price = count_sheets * 8
 		return price
 
 def get_difint():
@@ -96,6 +96,26 @@ def get_difint():
 			if (i == 1):
 				something = msg
 				return something
+
+def get_agreement():
+	message_sender(id, "Согласны ли вы отправить свой заказ администратору для дальнейшего обслуживания?(\"Да\" \"Нет\")")
+	i = 0
+	for event in longpoll.listen():
+		if event.type == VkEventType.MESSAGE_NEW and event.to_me:
+			msg = event.text
+			i += 1
+			if (i == 1):
+				if (msg == "Да"):
+					return 1	# означает, что пользователь хочет идти дальше
+				elif (msg == "Нет"):
+
+					return 0 # означает, что пользователь не готов идти дальше
+				else:
+					return "non"
+
+
+
+
 
 
 def get_order(): #функция в которой вызываются все остальные функции для заказа и обрабатываются
@@ -117,16 +137,16 @@ def get_order(): #функция в которой вызываются все �
 
 		#получение типа печати, количества страниц, цены если услуга = 1 или 3
 		if ((type_ord == 1) or (type_ord == 3)):
-			type_print = gettype_print()
-			if (type_print == "non"):
-				while (type_print == "non"):
-					type_print = gettype_print()
-
+			#получение количества страниц
 			count_sheets = get_countsheets()
 			if (count_sheets == "non"):
 				while (count_sheets == "non"):
 					count_sheets = get_countsheets()
-
+			#получение типа печати
+			type_print = gettype_print()
+			if (type_print == "non"):
+				while (type_print == "non"):
+					type_print = gettype_print()
 
 			#получение приблизительной цены
 			if (type_print == 1):
@@ -134,7 +154,7 @@ def get_order(): #функция в которой вызываются все �
 			elif (type_print == 2):
 				money = get_price(2, count_sheets)
 
-
+			#получение дополнительной информации
 			info_dop = get_difint()
 			message_sender(id, "Приблизительная цена(потому что не учитывается много факторов): " + str(money))
 			zakaz = "Ссылка : vk.com/id" + str(id) + "\n"+ "Номер заказа: " + str(type_ord) +"\n"+ "Тип печати:" + str(type_print) +"\n"+ "Доп-информация: " + info_dop +"\n" +"Примерная цена: " + str(money)
@@ -146,16 +166,24 @@ def get_order(): #функция в которой вызываются все �
 			zakaz = "Ссылка : vk.com/id" + str(id) + "\nНомер заказа: " + str(type_ord) + "\nДоп-информация: " + info_dop
 
 
-		message_sender(id, "Согласны ли вы отправить свой заказ администратору для дальнейшего обслуживания?(\"Да\" \"Нет\")")
-		agreement = get_wantenter()
+		#получение согласия от пользователя для отправки анкеты
+		agreement = get_agreement()
+
+		if(agreement == "non"):
+			print(agreement)
+			while(agreement == "non"):
+				message_sender(id, "Прости я не понял тебя.")
+				agreement = get_agreement()
+
 		if (agreement == 1):
 			message_sender(main_id, zakaz)
-			message_sender(id, "Спасибо! Ваш заказ отправлен администратору. В скором времени он обязательно свяжется с вами.")
+			message_sender(id, "Спасибо, ваш заказ отпрален администратору. В скором времени он свяжется с вами.")
 		elif (agreement == 0):
-			message_sender(id, "Ладно, бывает.")
-		elif (agreement == "non"):
-			while (agreement == "non"):
-				agreement == get_wantenter()
+			print(agreement)
+			message_sender(id, "Ладно, как хочешь.")
+
+
+
 
 
 	else:
